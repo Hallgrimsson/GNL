@@ -6,7 +6,7 @@
 /*   By: jsousa-d <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 14:21:33 by jsousa-d          #+#    #+#             */
-/*   Updated: 2024/11/11 17:17:37 by jsousa-d         ###   ########.fr       */
+/*   Updated: 2024/11/11 19:40:35 by jsousa-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ char	*fill_container(int fd, char *buf, char *container)
 	{
 		readcount = read(fd, buf, BUFFER_SIZE);
 		if (readcount == -1)
-		{
-			free(container);
 			return (NULL);
-		}
 		if (readcount == 0)
 			break ;
 		buf[readcount] = '\0';
@@ -68,6 +65,14 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	buf = malloc(BUFFER_SIZE + 1);
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+    {
+        free(container);
+        free(buf);
+        container = NULL;
+        buf = NULL;
+        return (NULL);
+    }
 	if (!buf)
 		return (NULL);
 	line = fill_container(fd, buf, container);
