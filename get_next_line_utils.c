@@ -6,39 +6,11 @@
 /*   By: jsousa-d <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 15:40:35 by jsousa-d          #+#    #+#             */
-/*   Updated: 2024/11/11 16:34:56 by jsousa-d         ###   ########.fr       */
+/*   Updated: 2024/11/13 17:27:11 by jsousa-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	char	*d;
-	size_t	i;
-	size_t	len_s;
-
-	i = 0;
-	len_s = ft_strlen(s);
-	if (len_s - start < len)
-		len = len_s - start;
-	if (start >= len_s)
-	{
-		d = malloc(1);
-		d[0] = '\0';
-		return (d);
-	}
-	d = malloc(((unsigned int) len + 1) * sizeof(char));
-	if (d == NULL)
-		return (NULL);
-	while (i < len && s[start + i] && len_s > start)
-	{
-		d[i] = s[start + i];
-		i++;
-	}
-	d[i] = '\0';
-	return (d);
-}
 
 char	*ft_strchr(const char *s, int c)
 {

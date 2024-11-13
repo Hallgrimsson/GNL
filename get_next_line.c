@@ -6,7 +6,7 @@
 /*   By: jsousa-d <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 14:21:33 by jsousa-d          #+#    #+#             */
-/*   Updated: 2024/11/11 19:40:35 by jsousa-d         ###   ########.fr       */
+/*   Updated: 2024/11/13 17:25:15 by jsousa-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 
 char	*fill_container(int fd, char *buf, char *container)
 {
-	ssize_t	readcount;
+	int		readcount;
 	char	*tmp;
 
 	readcount = 1;
-	while (readcount > 0)
+	tmp = NULL;
+	while (readcount != 0)
 	{
 		readcount = read(fd, buf, BUFFER_SIZE);
 		if (readcount == -1)
@@ -26,13 +27,13 @@ char	*fill_container(int fd, char *buf, char *container)
 		if (readcount == 0)
 			break ;
 		buf[readcount] = '\0';
-		if (container == NULL)
+		if (!container)
 			container = ft_strdup("");
 		tmp = container;
 		container = ft_strjoin(tmp, buf);
 		free(tmp);
 		tmp = NULL;
-		if (ft_strchr(container, '\n') != NULL)
+		if (ft_strchr(container, '\n'))
 			break ;
 	}
 	return (container);
@@ -40,22 +41,19 @@ char	*fill_container(int fd, char *buf, char *container)
 
 char	*dismember_line(char *line)
 {
-	ssize_t	i;
+	int		end;
 	char	*remaining;
+	char	*newline;
 
-	i = 0;
-	while (line[i] && line[i] != '\n')
-		i++;
-	if (!line[i])
-		return (NULL);
-	remaining = ft_substr(line, i + 1, ft_strlen(line) - i);
-	if (*remaining == 0)
+	if (line && ft_strchr(line, '\n'))
 	{
-		free(remaining);
-		remaining = NULL;
+		newline = ft_strchr(line, '\n');
+		end = ft_strlen(line) - ft_strlen(newline) + 1;
+		remaining = ft_strdup(newline + 1);
+		line[end] = '\0';
+		return (remaining);
 	}
-	line[i + 1] = '\0';
-	return (remaining);
+	return (NULL);
 }
 
 char	*get_next_line(int fd)
@@ -64,22 +62,21 @@ char	*get_next_line(int fd)
 	char		*buf;
 	char		*line;
 
-	buf = malloc(BUFFER_SIZE + 1);
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-    {
-        free(container);
-        free(buf);
-        container = NULL;
-        buf = NULL;
-        return (NULL);
-    }
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buf = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
 	line = fill_container(fd, buf, container);
 	free(buf);
 	buf = NULL;
-	if (!line)
-		return (NULL);
+	if (line == NULL && container)
+		free(container);
 	container = dismember_line(line);
+	if (line == NULL || *line == '\0')
+	{
+		free(line);
+		line = NULL;
+	}
 	return (line);
 }
